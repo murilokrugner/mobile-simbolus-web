@@ -6,52 +6,30 @@ import history from '../../../services/history';
 import api from '../../../services/api';
 
 import { signInSuccess, signFailure } from './actions';
+import {updateProfileSuccess} from '../user/actions';
 
 export function* signIn({ payload }) {
   try {
-    const { email, password } = payload;
+    const {company, email, password} = payload;
 
-    const response = yield call(api.post, 'sessions', {
-      email,
-      password,
+    const response = yield call(api.post, 'session', {
+      company_name: company,
+      user_name: email,
+      password: password,
     });
 
-    const { token, user } = response.data;
+    const {token, user} = response.data;
 
     api.defaults.headers.Authorization = `Bearer ${token}`;
 
-    yield put(signInSuccess(token, user));
+    yield put(signInSuccess(token));
 
-    if (user.provider) {
-      history.push('/dashboard');
-      return;
-    }
+    yield put(updateProfileSuccess(user));
 
-    if (!user.provider) {
-      history.push('/dashboardclient');
-      return;
-    }
+    history.push('/dashboard');
+
   } catch (err) {
     toast.error('Falha na autenticação, verifique seus dados');
-    yield put(signFailure());
-  }
-}
-
-export function* signUp({ payload }) {
-  try {
-    const { name, email, password } = payload;
-
-    yield call(api.post, 'users', {
-      name,
-      email,
-      password,
-      provider: false,
-    });
-
-    history.push('/');
-  } catch (err) {
-    toast.error('Falha no cadastro, verifique seus dados!');
-
     yield put(signFailure());
   }
 }
@@ -73,6 +51,5 @@ export function signOut() {
 export default all([
   takeLatest('persist/REHYDRATE', setToken),
   takeLatest('@auth/SIGN_IN_REQUEST', signIn),
-  takeLatest('@auth/SIGN_UP_REQUEST', signUp),
   takeLatest('@auth/SIGN_OUT', signOut),
 ]);

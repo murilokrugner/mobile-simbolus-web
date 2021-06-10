@@ -1,5 +1,5 @@
 import styled from 'styled-components';
 
-export const Container = styled.div`
-  
+export const ContainerDropdown = styled.div`
+    margin-bottom: 20px;
 `;

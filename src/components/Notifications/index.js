@@ -3,7 +3,7 @@ import { MdNotifications } from 'react-icons/md';
 import { parseISO, formatDistance } from 'date-fns';
 import pt from 'date-fns/locale/pt';
 
-import api from '~/services/api';
+import api from '../../services/api';
 
 import {
   Container,
@@ -49,7 +49,7 @@ export default function Notifications() {
   return (
     <Container>
       <Badge onClick={handleToggleVisible} hasUnread={hasUnread}>
-        <MdNotifications color="#7159c1" size={20} />
+        <MdNotifications color="#00325a" size={20} />
       </Badge>
       <NotificationList visible={visible}>
         <Scroll>

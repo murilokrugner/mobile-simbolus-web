@@ -4,8 +4,8 @@ import { Link } from 'react-router-dom';
 
 import { Container, Content, Profile } from './styles';
 
-import Notifications from '~/components/Notifications';
-import logo from '~/assets/logobela.png';
+import Notifications from '../../components/Notifications';
+import logo from '../../assets/simb.png';
 
 export default function Header() {
   const profile = useSelector(state => state.user.profile);
@@ -17,22 +17,21 @@ export default function Header() {
           <img src={logo} alt="logo" />
           <Link to="/dashboard">DASHBOARD</Link>
         </nav>
+        <nav>    
+          <Link to="/maps">MAPAS</Link>
+        </nav>
 
         <aside>
           <Notifications />
 
           <Profile>
             <div>
-              <strong>{profile.name}</strong>
+              <strong>{profile.fun_nome}</strong>
               <Link to="/profile">Meu Perfil</Link>
             </div>
             <img
-              src={
-                profile.avatar
-                  ? profile.avatar.url
-                  : 'https://api.adorable.io/avatars/50/abott@adorable.pngprofile.avatar_url || '
-              }
-              alt={profile.name}
+              src={'https://api.adorable.io/avatars/50/abott@adorable.pngprofile.avatar_url'}
+              alt='avatar'
             />
           </Profile>
         </aside>

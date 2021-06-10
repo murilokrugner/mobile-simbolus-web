@@ -4,7 +4,7 @@ import { persistReducer } from 'redux-persist';
 export default reducers => {
   const persistedReucer = persistReducer(
     {
-      key: 'belaschedule',
+      key: 'mobilesimbolus',
       storage,
       whitelist: ['auth', 'user'],
     },
