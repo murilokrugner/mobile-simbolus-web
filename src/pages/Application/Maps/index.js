@@ -1,15 +1,12 @@
 import React, {useState, useEffect} from 'react';
-
-import ReactMapboxGl, { Layer, Feature, Marker } from 'react-mapbox-gl';
+import ReactMapboxGl, { Marker } from 'react-mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
-
-import ClipLoader from "react-spinners/ClipLoader";
-
+import Loading from '../../../components/Loading';
 import { Container } from './styles';
-
-import marketIcon from '../../../assets/simb.png';
-
 import io from 'socket.io-client';
+import Panel from '../../../components/Panel';
+import api from '../../../services/api';
+import { useSelector } from 'react-redux';
 
 const Map = ReactMapboxGl({
     accessToken:
@@ -23,47 +20,86 @@ function Maps() {
     const [loadingData, setLoadingData] = useState(true);
     const [currentPosition, setCurrentPosition] = useState(null);   
     const [datas, setDatas] = useState([]);
+    const [currentDatas, setCurrentDatas] = useState([]);
+
+    const profile = useSelector(state => state.user.profile);
+
+    async function saveLocationCache(data) {
+       await api.post('location-cache', {
+            company: profile.emp_codigo,
+            routes: data,
+       });
+    }
 
     socket.on('received', async function(data) {  
-        setDatas(data);
+        setDatas(data);   
+        setCurrentDatas(data);    
+        saveLocationCache(data);
     });
-
-    useEffect(() => {
-        navigator.geolocation.getCurrentPosition(function(position) {
-            setCurrentPosition([position.coords.longitude, position.coords.latitude]);
-
-            setLoading(false);
-        });    
-    }, []);
 
    function handleViewUser(id, name) {
        alert('Usuario: ' + name)
    }
 
+   function handleSetData(data) {
+    setDatas(data);
+   }
+
+   async function loadLocationCache() {
+       const response = await api.get(`location-cache?company=${profile.emp_codigo}`);
+
+       setDatas(response.data[0].routes);
+
+       setCurrentDatas(response.data[0].routes);
+
+       setLoadingData(false);
+   }
+
+   useEffect(() => {
+       loadLocationCache();
+        navigator.geolocation.getCurrentPosition(function(position) {
+            setCurrentPosition([position.coords.longitude, position.coords.latitude]);          
+        });  
+        
+        setLoading(false);
+    }, []);
+
+    useEffect(() => {
+
+    }, [datas, currentDatas]);
+
+
+   //mapbox://styles/mapbox/dark-v9
+
   return (
-      <Container>
-          {loading && loadingData ? (
-               <ClipLoader color={'#fff'} loading={loading} size={100} />
+      <Container>     
+          {loading || loadingData ? (
+               <Loading loading={loading} />
           ) : (
-            <Map
-                style="mapbox://styles/mapbox/streets-v9"
-                zoom={[14]}
-                center={currentPosition}                
-                containerStyle={{
-                    height: '100vh',
-                    width: '100vw'
-                }}
-                >
-                 {datas.map(location => (
-                    <Marker
-                        coordinates={location.coords}
-                        onClick={() => {handleViewUser(location.user, location.name)}}
-                        anchor="bottom">
-                        <img src={`https://avatars.dicebear.com/api/human/${location.user}.svg`} style={{width: 40, height: 40, borderRadius: 50, border: 50}}/>
-                    </Marker>
-                ))}
-            </Map>
-          )}
+            <>
+                <Map
+                    style="mapbox://styles/mapbox/streets-v9"
+                    zoom={[14]}
+                    center={currentPosition}                
+                    containerStyle={{
+                        height: '100vh',
+                        width: '100vw'
+                    }}
+                    >
+                    {datas.map(location => (
+                        <Marker
+                            coordinates={location.coords}
+                            onClick={() => {handleViewUser(location.user, location.name)}}
+                            anchor="bottom">
+                            <img src={`https://avatars.dicebear.com/api/human/${location.user}.svg`} style={{width: 40, height: 40, borderRadius: 50, border: 50}}/>
+                        </Marker>
+                    ))}
+                </Map>
+        
+
+                <Panel dataEmployee={currentDatas} handleSetData={handleSetData} />
+            </>
+        )}
       </Container>
   )
 }

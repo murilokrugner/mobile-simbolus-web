@@ -26,7 +26,7 @@ export function* signIn({ payload }) {
 
     yield put(updateProfileSuccess(user));
 
-    history.push('/dashboard');
+    history.push('/maps');
 
   } catch (err) {
     toast.error('Falha na autenticação, verifique seus dados');
