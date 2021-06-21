@@ -58,10 +58,11 @@ function Maps() {
    useEffect(() => {
        loadLocationCache();
         navigator.geolocation.getCurrentPosition(function(position) {
-            setCurrentPosition([position.coords.longitude, position.coords.latitude]);          
+            setCurrentPosition([position.coords.longitude, position.coords.latitude]);     
+            setLoading(false);     
         });  
         
-        setLoading(false);
+       
     }, []);
 
     useEffect(() => {
