@@ -27,6 +27,8 @@ function Maps() {
     const [geojson, setGeojson] = useState(null)
     const profile = useSelector(state => state.user.profile);
 
+    const [searchOn, setSearchOn] = useState(false);
+
     async function saveLocationCache(data) {
        await api.post('location-cache', {
             company: profile.emp_codigo,
@@ -46,6 +48,7 @@ function Maps() {
 
    function handleSetData(data) {
     setDatas(data);
+    setSearchOn(true);
    }
 
    async function loadLocationCache() {
@@ -67,7 +70,7 @@ function Maps() {
 
    function handleClean() {
     setGeojson(null);
-
+    setSearchOn(false);
    }
 
    useEffect(() => {
@@ -101,7 +104,7 @@ function Maps() {
                 <Map
                     style="mapbox://styles/mapbox/streets-v9"
                     zoom={[14]}
-                    center={currentPosition}                
+                    center={searchOn ? datas[0].coords : currentPosition}                
                     containerStyle={{
                         height: '100vh',
                         width: '100vw'
