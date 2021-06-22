@@ -17,6 +17,9 @@ export default function Header() {
           <img src={logo} alt="logo" />
           <Link to="/maps">MAPAS</Link>
         </nav>
+        <nav>
+          <Link to="/create-notifications">NOTIFICAÇÕES</Link>
+        </nav>
 
         <aside>
          {/**  <Notifications /> */}

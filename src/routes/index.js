@@ -7,7 +7,7 @@ import {
 import Route from './Route';
 
 import SignIn from '../pages/Auth/SignIn';
-import Dashboard from '../pages/Application/Dashboard';
+import CreateNotifications from '../pages/Application/CreateNotifications';
 
 import Maps from '../pages/Application/Maps';
 
@@ -17,7 +17,7 @@ export default function Routes() {
         <Switch>
           <Route path="/" exact component={SignIn} />
 
-          <Route path="/dashboard" component={Dashboard} isPrivate />
+          <Route path="/create-notifications" component={CreateNotifications} isPrivate />
 
           <Route path="/maps" component={Maps} isPrivate />
 
