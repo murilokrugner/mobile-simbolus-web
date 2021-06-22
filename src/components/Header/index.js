@@ -19,12 +19,12 @@ export default function Header() {
         </nav>
 
         <aside>
-          <Notifications />
+         {/**  <Notifications /> */}
 
           <Profile>
             <div>
               <strong>{profile.fun_nome}</strong>
-              <Link to="/profile">Meu Perfil</Link>
+             <Link>Gerente</Link>
             </div>
             <img
               src={'https://api.adorable.io/avatars/50/abott@adorable.pngprofile.avatar_url'}

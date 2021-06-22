@@ -1,13 +1,15 @@
 import React, {useState, useEffect} from 'react';
 
-import { Container } from './styles';
+import { Container, ContainerRoutes } from './styles';
 
 import ReactSelect from 'react-select';
+
+import RoutesEmployee from '../RoutesEmployee';
 
 import { useSelector } from 'react-redux';
 import api from '../../services/api';
 
-function Panel({dataEmployee, handleSetData}) {
+function Panel({dataEmployee, handleSetData, handleSetGeoJson, handleClean}) {
     const [selectEmployee, setSelectEmployee] = useState('');
     const [employees, setEmployees] = useState([]);
     const [loadingEmployees, setLoadingEmployees] = useState(true);
@@ -48,6 +50,10 @@ function Panel({dataEmployee, handleSetData}) {
         handleSetData(dataEmployee);
     }
 
+    function handleGeoJson(json) {
+        handleSetGeoJson(json)
+    }
+
     useEffect(() => {
         loadEmployees();
     }, []);
@@ -62,12 +68,20 @@ function Panel({dataEmployee, handleSetData}) {
             onChange={value => setSelectEmployee(value)}
             placeholder={'Selecionar vendedor'}                    
             options={employees}
-            isClearable={true}
+            isClearable={false}
             isLoading={loadingEmployees}
           />
 
           <button type="button" onClick={searchEmployee}>Buscar</button>
           <button type="button" onClick={handleAllEmployees}>Todos</button>
+
+         
+           <ContainerRoutes>
+               <h3>Rotas do vendedor</h3>
+               <RoutesEmployee employee={selectEmployee ? selectEmployee.value : null } handleGeoJson={handleGeoJson} />
+               <button type="button" onClick={handleClean}>Limpar</button>
+           </ContainerRoutes>
+        
       </Container>
   );
 }

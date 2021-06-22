@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import ReactMapboxGl, { Marker } from 'react-mapbox-gl';
+import ReactMapboxGl, { Marker, GeoJSONLayer, Layer, Feature } from 'react-mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import Loading from '../../../components/Loading';
 import { Container } from './styles';
@@ -7,6 +7,9 @@ import io from 'socket.io-client';
 import Panel from '../../../components/Panel';
 import api from '../../../services/api';
 import { useSelector } from 'react-redux';
+import markerIcon from '../../../assets/marker.png';
+import startIcon from '../../../assets/start.png';
+import finishedIcon from '../../../assets/finished.png';
 
 const Map = ReactMapboxGl({
     accessToken:
@@ -21,7 +24,7 @@ function Maps() {
     const [currentPosition, setCurrentPosition] = useState(null);   
     const [datas, setDatas] = useState([]);
     const [currentDatas, setCurrentDatas] = useState([]);
-
+    const [geojson, setGeojson] = useState(null)
     const profile = useSelector(state => state.user.profile);
 
     async function saveLocationCache(data) {
@@ -53,13 +56,25 @@ function Maps() {
        setCurrentDatas(response.data[0].routes);
 
        setLoadingData(false);
+
+       
+   }
+
+   function handleSetGeoJson(json) {
+      setGeojson(json.value);
+    
+   }
+
+   function handleClean() {
+    setGeojson(null);
+
    }
 
    useEffect(() => {
-       loadLocationCache();
+      loadLocationCache();
         navigator.geolocation.getCurrentPosition(function(position) {
             setCurrentPosition([position.coords.longitude, position.coords.latitude]);     
-            setLoading(false);     
+            setLoading(false); 
         });  
         
        
@@ -67,10 +82,15 @@ function Maps() {
 
     useEffect(() => {
 
-    }, [datas, currentDatas]);
+    }, [datas, currentDatas, geojson]);
 
 
    //mapbox://styles/mapbox/dark-v9
+
+   const linePaint = {
+      'line-color': 'black',
+      'line-width': 3,
+    };
 
   return (
       <Container>     
@@ -87,6 +107,60 @@ function Maps() {
                         width: '100vw'
                     }}
                     >
+                    {geojson && (
+                        <>
+                          <GeoJSONLayer
+                            data={geojson}
+                            linePaint={linePaint}                          
+                          />                     
+
+                          <>
+                            {geojson.features.map(p => (
+                              <>
+                                {p.geometry.type === 'Point' && (
+                                  <Marker
+                                    coordinates={p.geometry.coordinates}
+                                    onClick={() => {alert(p.properties.name +
+                                      '\n' +
+                                      p.properties.prp_name)}}
+                                    anchor="bottom">  
+                                    <img src={markerIcon} style={{width: 40, height: 40, borderRadius: 50, border: 50}}/>                                
+                                  </Marker>
+                                )}
+
+<>
+                                {p.geometry.type === 'LineString' && (
+                                  <>
+                                    <Marker
+                                      coordinates={p.geometry.coordinates[0]}
+                                      onClick={() => {alert('INICIO')}}
+                                      anchor="bottom">  
+                                      <img src={startIcon} style={{width: 40, height: 40, borderRadius: 50, border: 50}}/>                                
+                                    </Marker>
+
+                                    <Marker
+                                      coordinates={
+                                        p.geometry.coordinates[
+                                            p.geometry.coordinates
+                                                .length - 1
+                                        ]
+                                      }
+                                      onClick={() => {alert('FIM')}}
+                                      anchor="bottom">  
+                                      <img src={finishedIcon} style={{width: 40, height: 40, borderRadius: 50, border: 50}}/>                                
+                                    </Marker>
+
+                                  </>
+                                )}
+                              </>
+                              </>
+                              
+                            ))}
+                          </>
+
+                        </>
+                    )}    
+              
                     {datas.map(location => (
                         <Marker
                             coordinates={location.coords}
@@ -95,10 +169,12 @@ function Maps() {
                             <img src={`https://avatars.dicebear.com/api/human/${location.user}.svg`} style={{width: 40, height: 40, borderRadius: 50, border: 50}}/>
                         </Marker>
                     ))}
+                   
+         
+                    
                 </Map>
         
-
-                <Panel dataEmployee={currentDatas} handleSetData={handleSetData} />
+                <Panel dataEmployee={currentDatas} handleSetData={handleSetData} handleSetGeoJson={handleSetGeoJson} handleClean={handleClean}/>
             </>
         )}
       </Container>
