@@ -29,17 +29,17 @@ function Maps() {
 
     const [searchOn, setSearchOn] = useState(false);
 
-    async function saveLocationCache(data) {
+    /*async function saveLocationCache(data) {
        await api.post('location-cache', {
             company: profile.emp_codigo,
             routes: data,
        });
-    }
+    }*/
 
     socket.on('received', async function(data) {  
         setDatas(data);   
         setCurrentDatas(data);    
-        saveLocationCache(data);
+        //saveLocationCache(data);
     });
 
    function handleViewUser(id, name) {
