@@ -1,14 +1,21 @@
 import React from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 
 import { Container, Content, Profile } from './styles';
 
-import Notifications from '../../components/Notifications';
+import { signOut } from '../../store/modules/auth/actions';
+
 import logo from '../../assets/simb.png';
 
 export default function Header() {
+  const dispatch = useDispatch();
+
   const profile = useSelector(state => state.user.profile);
+
+  function handleSignOut() {
+    dispatch(signOut());
+  }
 
   return (
     <Container>
@@ -20,6 +27,9 @@ export default function Header() {
         <nav>
           <Link to="/create-notifications">NOTIFICAÇÕES</Link>
         </nav>
+        <nav>
+          <Link to="/alter-password">ALTERAR SENHA</Link>
+        </nav>
 
         <aside>
          {/**  <Notifications /> */}
@@ -27,7 +37,9 @@ export default function Header() {
           <Profile>
             <div>
               <strong>{profile.fun_nome}</strong>
-             <Link>Gerente</Link>
+              <button type="button" onClick={handleSignOut}>
+                Sair
+              </button>
             </div>
             <img
               src={'https://api.adorable.io/avatars/50/abott@adorable.pngprofile.avatar_url'}

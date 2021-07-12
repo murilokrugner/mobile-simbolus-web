@@ -65,4 +65,13 @@ export const Profile = styled.div`
     height: 32px;
     border-radius: 50%;
   }
+
+  button {
+    margin-top: 5px;
+
+    border: 0px;
+    background-color: #fff;
+
+    color: #999;
+  }
 `;
