@@ -40,10 +40,7 @@ export default function CreateNotifications() {
   }
 
   async function createNotification() {
-    const idGen = new Date().getTime().toString();
-
     await api.post('notification', {
-      id: idGen.slice(2, 10),
       user_id: selectEmployee.value,
       message: message,
       lida: 0,
