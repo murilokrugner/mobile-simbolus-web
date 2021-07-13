@@ -2,6 +2,7 @@ import React from "react";
 import {
   BrowserRouter,
   Switch,
+  Router,
 } from "react-router-dom";
 
 import Route from './Route';
@@ -13,8 +14,8 @@ import AlterPassword from '../pages/Application/AlterPassword';
 import Maps from '../pages/Application/Maps';
 
 export default function Routes() {
-  return (
-    <BrowserRouter>
+  return (  
+   
         <Switch>
           <Route path="/" exact component={SignIn} />
 
@@ -25,7 +26,7 @@ export default function Routes() {
           <Route path="/alter-password" component={AlterPassword} isPrivate />
 
           <Route path="/" component={() => <h1>404</h1>} />
-        </Switch>
-    </BrowserRouter>
+        </Switch>  
+
   );
 }
