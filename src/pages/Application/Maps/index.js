@@ -21,7 +21,7 @@ const Map = ReactMapboxGl({
     "pk.eyJ1IjoibXVyaWxva3J1Z25lciIsImEiOiJja3Bjd3ZvM2cxYTRwMm9sYTZrbmZva2ZnIn0.j68LYEywNr9hu4B0Kk8AjQ",
 });
 
-const socket = io("http://localhost:3333");
+const socket = io("http://201.33.248.208:3333");
 
 function Maps() {
   const [loading, setLoading] = useState(true);
