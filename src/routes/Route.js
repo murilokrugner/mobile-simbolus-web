@@ -16,17 +16,16 @@ export default function RouterWrapper({
   ...rest
 }) {
   const { signed } = store.getState().auth;
-  const { user } = store.getState().auth;
 
   if (!signed && isPrivate) {
     return <Redirect to="/" />;
   }
 
-  if (signed && !isPrivate && user) {
+  if (signed && !isPrivate) {
     return <Redirect to="/maps" />;
   }
 
-  const Layout = signed ? DefaultLayout : AuthLayout;
+  const Layout = signed  ? DefaultLayout : AuthLayout;
 
   return (
     <Route

@@ -14,7 +14,7 @@ export function* signIn({ payload }) {
   try {
     const {company, email, password} = payload;
 
-    const response = yield call(api.post, 'session', {
+    const response = yield call(api.post, 'session-web', {
       company_name: company,
       user_name: email,
       password: password,
