@@ -23,4 +23,8 @@ export const Container = styled.div`
 
 export const ContainerRoutes = styled.div`
   margin-top: 30px;
+
+  button  {
+    width: 200px;
+  }
 `;

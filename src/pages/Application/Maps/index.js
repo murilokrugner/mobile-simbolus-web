@@ -5,6 +5,7 @@ import ReactMapboxGl, {
   Layer,
   Feature,
 } from "react-mapbox-gl";
+import ReactSelect from 'react-select';
 import "mapbox-gl/dist/mapbox-gl.css";
 import Loading from "../../../components/Loading";
 import { Container } from "./styles";
@@ -16,12 +17,31 @@ import markerIcon from "../../../assets/marker.png";
 import startIcon from "../../../assets/start.png";
 import finishedIcon from "../../../assets/finished.png";
 
+import Modal from 'react-modal';
+import { toast } from "react-toastify";
+
 const Map = ReactMapboxGl({
   accessToken:
     "pk.eyJ1IjoibXVyaWxva3J1Z25lciIsImEiOiJja3Bjd3ZvM2cxYTRwMm9sYTZrbmZva2ZnIn0.j68LYEywNr9hu4B0Kk8AjQ",
 });
 
 const socket = io("http://201.33.248.208:3333");
+
+const customStyles = {
+  content: {
+    top: '50%',
+    left: '70%',
+    right: 'auto',
+    bottom: 'auto',
+    marginRight: '-50%',
+    transform: 'translate(-50%, -50%)',
+    width: 350,
+    height: 500,
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'space-around',
+  },
+};
 
 function Maps() {
   const [loading, setLoading] = useState(true);
@@ -32,19 +52,33 @@ function Maps() {
   const [geojson, setGeojson] = useState(null);
   const profile = useSelector((state) => state.user.profile);
 
+  const [selectEmployee, setSelectEmployee] = useState('');
+  const [employees, setEmployees] = useState([]);
+  const [loadingEmployees, setLoadingEmployees] = useState(true);
+
+  const [jsonComplete, setJsonComplete] = useState(null);
+
   const [searchOn, setSearchOn] = useState(false);
 
-  /*async function saveLocationCache(data) {
-       await api.post('location-cache', {
-            company: profile.emp_codigo,
-            routes: data,
-       });
-    }*/
+  const [modalIsOpen, setIsOpen] = useState(false);
+
+  async function loadEmployees() {
+      const response = await api.get(`employees?company=${profile.emp_codigo}`);
+
+      const data = [];
+
+      const formatEmployees = response.data.map(item => {
+      data.push({'value': item.FUN_CODIGO, 'label': item.FUN_NOME});
+      });
+
+      setEmployees(data);
+
+      setLoadingEmployees(false);
+  }
 
   socket.on("received", async function (data) {
     setDatas(data);
     setCurrentDatas(data);
-    //saveLocationCache(data);
   });
 
   function handleViewUser(id, name) {
@@ -70,11 +104,51 @@ function Maps() {
 
   function handleSetGeoJson(json) {
     setGeojson(json.value);
+    setJsonComplete(json);
   }
 
   function handleClean() {
     setGeojson(null);
     setSearchOn(false);
+  }
+
+  
+  function openModal() {
+    setIsOpen(true);
+  }
+
+  function closeModal() {
+    setIsOpen(false);
+  }
+
+  function handleSubmitTrasfer() {
+      openModal();
+  }
+
+  async function sendTransfer() {
+    if (selectEmployee === '' || selectEmployee === null) {
+      alert('Selecione o vendendor');
+      return;
+    }
+
+      if (jsonComplete === '' || jsonComplete === null) {
+        alert('Selecione a rota que você quer transferir');
+        return;
+      }
+
+      const splitJson = jsonComplete.label.split('-');
+
+      const idJson = splitJson[0];
+
+      try {
+        await api.post(`transfer-route?idJson=${idJson}&employee=${selectEmployee.value}`)
+
+        toast.success('Rota transferida com sucesso!');
+  
+        closeModal();
+      } catch (error) {
+        toast.error('Erro ao transferir rota, tente novamente mais tarde');
+      }
   }
 
   useEffect(() => {
@@ -85,7 +159,13 @@ function Maps() {
     });
   }, []);
 
-  useEffect(() => {}, [datas, currentDatas, geojson]);
+  useEffect(() => {
+    loadEmployees();
+  }, []);
+
+  useEffect(() => {
+    loadEmployees();
+  }, [datas, currentDatas, geojson]);
 
   //mapbox://styles/mapbox/dark-v9
 
@@ -96,6 +176,7 @@ function Maps() {
 
   return (
     <Container>
+
       {loading || loadingData ? (
         <Loading loading={loading} />
       ) : (
@@ -215,9 +296,31 @@ function Maps() {
             handleSetData={handleSetData}
             handleSetGeoJson={handleSetGeoJson}
             handleClean={handleClean}
-          />
+            handleSubmitTrasfer={handleSubmitTrasfer}
+          />     
         </>
-      )}
+      )}      
+
+      
+      <Modal
+        isOpen={modalIsOpen}
+        onRequestClose={closeModal}
+        style={customStyles}
+        contentLabel="Transferir rota para outro vendedor"
+      >
+        <h2>Selecione o vendendor para qual você quer transferir a rota</h2>
+        <ReactSelect    
+            name={selectEmployee}
+            value={selectEmployee}
+            defaultValue={selectEmployee}
+            onChange={value => setSelectEmployee(value)}
+            placeholder={'Selecionar vendedor'}                    
+            options={employees}
+            isClearable={false}
+            isLoading={loadingEmployees}
+          />
+        <button onClick={sendTransfer}>Transferir</button>
+      </Modal>
     </Container>
   );
 }

@@ -37,6 +37,7 @@ function RoutesEmployee({employee, handleGeoJson}) {
         handleGeoJson(selectRoute);     
     }
 
+
     useEffect(() => {
         if (employee !== null) {
             loadRoutes();

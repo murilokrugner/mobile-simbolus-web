@@ -9,7 +9,7 @@ import RoutesEmployee from '../RoutesEmployee';
 import { useSelector } from 'react-redux';
 import api from '../../services/api';
 
-function Panel({dataEmployee, handleSetData, handleSetGeoJson, handleClean}) {
+function Panel({dataEmployee, handleSetData, handleSetGeoJson, handleClean, handleSubmitTrasfer}) {
     const [selectEmployee, setSelectEmployee] = useState('');
     const [employees, setEmployees] = useState([]);
     const [loadingEmployees, setLoadingEmployees] = useState(true);
@@ -80,6 +80,8 @@ function Panel({dataEmployee, handleSetData, handleSetGeoJson, handleClean}) {
                <h3>Rotas do vendedor</h3>
                <RoutesEmployee employee={selectEmployee ? selectEmployee.value : null } handleGeoJson={handleGeoJson} />
                <button type="button" onClick={handleClean}>Limpar</button>
+
+               <button className="transfer" type="button" onClick={handleSubmitTrasfer}>Transferir rota para outro vendedor</button> 
            </ContainerRoutes>
         
       </Container>
