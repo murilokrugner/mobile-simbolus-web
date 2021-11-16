@@ -95,9 +95,11 @@ function Maps() {
       `location-cache?company=${profile.emp_codigo}`
     );
 
-    setDatas(response.data[0].routes);
+    if (response.data.length > 0) {
+      setDatas(response.data[0].routes);
 
-    setCurrentDatas(response.data[0].routes);
+      setCurrentDatas(response.data[0].routes);
+    }
 
     setLoadingData(false);
   }
