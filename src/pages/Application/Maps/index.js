@@ -8,7 +8,7 @@ import ReactMapboxGl, {
 import ReactSelect from 'react-select';
 import "mapbox-gl/dist/mapbox-gl.css";
 import Loading from "../../../components/Loading";
-import { Container } from "./styles";
+import { Container, ContainerButtonRefresh } from "./styles";
 import io from "socket.io-client";
 import Panel from "../../../components/Panel";
 import api from "../../../services/api";
@@ -47,7 +47,7 @@ function Maps() {
   const [loading, setLoading] = useState(true);
   const [loadingData, setLoadingData] = useState(true);
   const [currentPosition, setCurrentPosition] = useState(null);
-  const [datas, setDatas] = useState([]);
+  const [datas, setDatas] = useState(null);
   const [currentDatas, setCurrentDatas] = useState([]);
   const [geojson, setGeojson] = useState(null);
   const profile = useSelector((state) => state.user.profile);
@@ -76,10 +76,25 @@ function Maps() {
       setLoadingEmployees(false);
   }
 
-  socket.on("received", async function (data) {
+  async function loadDatas() {
+    try {
+      const response = await api.get(`routesall-company?company_name=${profile.emp_nome}`);
+    
+      setDatas(response.data);
+      setCurrentDatas(response.data);
+
+      setLoading(false);
+      setLoadingData(false);
+      
+    } catch (error) {
+      alert('Erro ao carregar dados')
+    }
+  }
+
+  /*socket.on("received", async function (data) {
     setDatas(data);
     setCurrentDatas(data);
-  });
+  });*/
 
   function handleViewUser(id, name) {
     alert("Usuario: " + name);
@@ -92,7 +107,7 @@ function Maps() {
 
   async function loadLocationCache() {
     const response = await api.get(
-      `location-cache?company=${profile.emp_codigo}`
+      `location-cache?company_name=${profile.emp_nome}`
     );
 
     if (response.data.length > 0) {
@@ -101,7 +116,8 @@ function Maps() {
       setCurrentDatas(response.data[0].routes);
     }
 
-    setLoadingData(false);
+    
+
   }
 
   function handleSetGeoJson(json) {
@@ -154,10 +170,10 @@ function Maps() {
   }
 
   useEffect(() => {
-    loadLocationCache();
+    loadDatas();
+   // loadLocationCache();
     navigator.geolocation.getCurrentPosition(function (position) {
       setCurrentPosition([position.coords.longitude, position.coords.latitude]);
-      setLoading(false);
     });
   }, []);
 
@@ -177,8 +193,7 @@ function Maps() {
   };
 
   return (
-    <Container>
-
+    <Container>        
       {loading || loadingData ? (
         <Loading loading={loading} />
       ) : (
@@ -192,6 +207,10 @@ function Maps() {
               width: "100vw",
             }}
           >
+            <>
+            <ContainerButtonRefresh>
+              <button type="button" onClick={loadDatas}>ATUALIZAR MAPA</button>
+            </ContainerButtonRefresh>
             {geojson && (
               <>
                 <GeoJSONLayer data={geojson} linePaint={linePaint} />
@@ -272,25 +291,31 @@ function Maps() {
               </>
             )}
 
-            {datas.map((location) => (
-              <Marker
-                coordinates={location.coords}
-                onClick={() => {
-                  handleViewUser(location.user, location.name);
-                }}
-                anchor="bottom"
-              >
-                <img
-                  src={`https://avatars.dicebear.com/api/human/${location.user}.svg`}
-                  style={{
-                    width: 40,
-                    height: 40,
-                    borderRadius: 50,
-                    border: 50,
-                  }}
-                />
-              </Marker>
-            ))}
+            {datas !== null && (
+              <>
+                {datas.map((location) => (
+                  <Marker
+                    coordinates={location.routes[0].coords}
+                    onClick={() => {
+                      handleViewUser(location.routes[0].user, location.routes[0].name);
+                    }}
+                    anchor="bottom"
+                  >
+                    <img
+                      src={`https://avatars.dicebear.com/api/human/${location.user}.svg`}
+                      style={{
+                        width: 40,
+                        height: 40,
+                        borderRadius: 50,
+                        border: 50,
+                      }}
+                    />
+                  </Marker>
+                ))}
+              </>
+            )}
+
+            </>
           </Map>
 
           <Panel
@@ -299,7 +324,7 @@ function Maps() {
             handleSetGeoJson={handleSetGeoJson}
             handleClean={handleClean}
             handleSubmitTrasfer={handleSubmitTrasfer}
-          />     
+          />  
         </>
       )}      
 

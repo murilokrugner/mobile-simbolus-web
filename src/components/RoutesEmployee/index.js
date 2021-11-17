@@ -20,7 +20,7 @@ function RoutesEmployee({employee, handleGeoJson}) {
         setLoading(true);
         
         const response = await api.get(
-            `routesall?company=${profile.emp_codigo}&fun=${employee}`,
+            `routesall?company_name=${profile.emp_nome}&fun=${employee}`,
         );
 
         const data = [];

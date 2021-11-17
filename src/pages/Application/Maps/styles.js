@@ -9,3 +9,22 @@ export const Container = styled.div`
     width: 100%;
     height: 100%;
 `;
+
+export const ContainerButtonRefresh = styled.div`
+    position: absolute;
+
+    margin: 40px;
+
+    button {
+        height: 70px;
+        width: 150px;
+
+        border-radius: 10px;
+
+        background-color: #00325a;
+
+        color: #fff;
+
+        font-size: 18px;
+    }
+`;
