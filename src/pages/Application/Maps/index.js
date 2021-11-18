@@ -180,6 +180,8 @@ function Maps() {
     "line-width": 3,
   };
 
+  console.log(datas);
+
   return (
     <Container>        
       {loading || loadingData ? (
@@ -286,9 +288,9 @@ function Maps() {
               <>
                 {datas.map((location) => (
                   <Marker
-                    coordinates={location.routes[0].coords}
+                    coordinates={location.routes}
                     onClick={() => {
-                      handleViewUser(location.routes[0].user, location.routes[0].name);
+                      handleViewUser(location.user, location.user_name);
                     }}
                     anchor="bottom"
                   >

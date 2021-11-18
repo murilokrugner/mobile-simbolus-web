@@ -37,9 +37,9 @@ function Panel({dataEmployee, handleSetData, handleSetGeoJson, handleClean, hand
             alert('Selecione o vendendor');
             return;
         }
-
+        
         const search = dataEmployee.map(item => {
-            if (item.name === selectEmployee.label) {
+            if (item.user_name === selectEmployee.label) {
                 handleSetData([item]);
                 return;
             }              
@@ -73,7 +73,7 @@ function Panel({dataEmployee, handleSetData, handleSetGeoJson, handleClean, hand
           />
 
           <button type="button" onClick={searchEmployee}>Buscar</button>
-          <button type="button" onClick={handleAllEmployees}>Todos</button>
+          {/*<button type="button" onClick={handleAllEmployees}>Todos</button>*/}
 
          
            <ContainerRoutes>
