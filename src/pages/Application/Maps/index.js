@@ -62,6 +62,8 @@ function Maps() {
 
   const [modalIsOpen, setIsOpen] = useState(false);
 
+  const [loadingMaps, setLoadingMaps] = useState(false);
+
   async function loadEmployees() {
       const response = await api.get(`employees?company=${profile.emp_codigo}`);
 
@@ -76,26 +78,6 @@ function Maps() {
       setLoadingEmployees(false);
   }
 
-  async function loadDatas() {
-    try {
-      const response = await api.get(`routesall-company?company_name=${profile.emp_nome}`);
-    
-      setDatas(response.data);
-      setCurrentDatas(response.data);
-
-      setLoading(false);
-      setLoadingData(false);
-      
-    } catch (error) {
-      alert('Erro ao carregar dados')
-    }
-  }
-
-  /*socket.on("received", async function (data) {
-    setDatas(data);
-    setCurrentDatas(data);
-  });*/
-
   function handleViewUser(id, name) {
     alert("Usuario: " + name);
   }
@@ -106,17 +88,24 @@ function Maps() {
   }
 
   async function loadLocationCache() {
+    setLoadingMaps(true);
+
     const response = await api.get(
       `location-cache?company_name=${profile.emp_nome}`
     );
 
     if (response.data.length > 0) {
-      setDatas(response.data[0].routes);
+      setDatas(response.data);
 
-      setCurrentDatas(response.data[0].routes);
+      setCurrentDatas(response.data);
+    } else {
+      setCurrentDatas(null);
+      setDatas(null);
     }
 
-    
+    setLoadingData(false);
+    setLoading(false);
+    setLoadingMaps(false);
 
   }
 
@@ -170,9 +159,8 @@ function Maps() {
   }
 
   useEffect(() => {
-    loadDatas();
-   // loadLocationCache();
     navigator.geolocation.getCurrentPosition(function (position) {
+      loadLocationCache();
       setCurrentPosition([position.coords.longitude, position.coords.latitude]);
     });
   }, []);
@@ -198,7 +186,10 @@ function Maps() {
         <Loading loading={loading} />
       ) : (
         <>
-          <Map
+          {loadingMaps ? (
+            <Loading loading={loadingMaps} />
+          ) : (
+            <Map
             style="mapbox://styles/mapbox/streets-v9"
             zoom={[14]}
             center={searchOn ? datas[0].coords : currentPosition}
@@ -209,7 +200,7 @@ function Maps() {
           >
             <>
             <ContainerButtonRefresh>
-              <button type="button" onClick={loadDatas}>ATUALIZAR MAPA</button>
+              <button type="button" onClick={loadLocationCache}>ATUALIZAR MAPA</button>
             </ContainerButtonRefresh>
             {geojson && (
               <>
@@ -317,6 +308,7 @@ function Maps() {
 
             </>
           </Map>
+          )}
 
           <Panel
             dataEmployee={currentDatas}
