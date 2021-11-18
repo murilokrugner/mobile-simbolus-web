@@ -106,7 +106,7 @@ export default function CreateNotifications() {
       </form>
 
       <button type="button" onClick={handleSubmitEmployee}>Enviar notificação para o vendedor</button>
-      <button type="button" onClick={handleSubmit}>Enviar notificação para todos os vendedor</button>
+      {/*<button type="button" onClick={handleSubmit}>Enviar notificação para todos os vendedor</button>*/}
     </Container>
   );
 }
