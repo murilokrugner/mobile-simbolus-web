@@ -20,6 +20,9 @@ import finishedIcon from "../../../assets/finished.png";
 import Modal from 'react-modal';
 import { toast } from "react-toastify";
 
+//import mapboxgl from 'mapbox-gl';
+//mapboxgl.workerClass = require('worker-loader!mapbox-gl/dist/mapbox-gl-csp-worker').default;
+
 const Map = ReactMapboxGl({
   accessToken:
     "pk.eyJ1IjoibXVyaWxva3J1Z25lciIsImEiOiJja3Bjd3ZvM2cxYTRwMm9sYTZrbmZva2ZnIn0.j68LYEywNr9hu4B0Kk8AjQ",
