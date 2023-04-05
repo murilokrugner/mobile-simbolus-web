@@ -5,7 +5,7 @@ import ReactMapboxGl, {
   Layer,
   Feature,
 } from "react-mapbox-gl";
-import ReactSelect from 'react-select';
+import ReactSelect from "react-select";
 import "mapbox-gl/dist/mapbox-gl.css";
 import Loading from "../../../components/Loading";
 import { Container, ContainerButtonRefresh } from "./styles";
@@ -17,7 +17,7 @@ import markerIcon from "../../../assets/marker.png";
 import startIcon from "../../../assets/start.png";
 import finishedIcon from "../../../assets/finished.png";
 
-import Modal from 'react-modal';
+import Modal from "react-modal";
 import { toast } from "react-toastify";
 
 //import mapboxgl from 'mapbox-gl';
@@ -25,24 +25,24 @@ import { toast } from "react-toastify";
 
 const Map = ReactMapboxGl({
   accessToken:
-    "pk.eyJ1IjoibXVyaWxva3J1Z25lciIsImEiOiJja3Bjd3ZvM2cxYTRwMm9sYTZrbmZva2ZnIn0.j68LYEywNr9hu4B0Kk8AjQ",
+    "pk.eyJ1Ijoic2ltYm9sdXMiLCJhIjoiY2w1aTNzOTBzMDRoMDNicGIwZnA0ZDd1MSJ9.TIuh5zi_hE4TP4bR3tztIg",
 });
 
 const socket = io("http://201.33.248.208:3333");
 
 const customStyles = {
   content: {
-    top: '50%',
-    left: '70%',
-    right: 'auto',
-    bottom: 'auto',
-    marginRight: '-50%',
-    transform: 'translate(-50%, -50%)',
+    top: "50%",
+    left: "70%",
+    right: "auto",
+    bottom: "auto",
+    marginRight: "-50%",
+    transform: "translate(-50%, -50%)",
     width: 350,
     height: 500,
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'space-around',
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "space-around",
   },
 };
 
@@ -55,7 +55,7 @@ function Maps() {
   const [geojson, setGeojson] = useState(null);
   const profile = useSelector((state) => state.user.profile);
 
-  const [selectEmployee, setSelectEmployee] = useState('');
+  const [selectEmployee, setSelectEmployee] = useState("");
   const [employees, setEmployees] = useState([]);
   const [loadingEmployees, setLoadingEmployees] = useState(true);
 
@@ -68,17 +68,17 @@ function Maps() {
   const [loadingMaps, setLoadingMaps] = useState(false);
 
   async function loadEmployees() {
-      const response = await api.get(`employees?company=${profile.emp_codigo}`);
+    const response = await api.get(`employees?company=${profile.emp_codigo}`);
 
-      const data = [];
+    const data = [];
 
-      const formatEmployees = response.data.map(item => {
-      data.push({'value': item.FUN_CODIGO, 'label': item.FUN_NOME});
-      });
+    const formatEmployees = response.data.map((item) => {
+      data.push({ value: item.FUN_CODIGO, label: item.FUN_NOME });
+    });
 
-      setEmployees(data);
+    setEmployees(data);
 
-      setLoadingEmployees(false);
+    setLoadingEmployees(false);
   }
 
   function handleViewUser(id, name) {
@@ -109,7 +109,6 @@ function Maps() {
     setLoadingData(false);
     setLoading(false);
     setLoadingMaps(false);
-
   }
 
   function handleSetGeoJson(json) {
@@ -122,7 +121,6 @@ function Maps() {
     setSearchOn(false);
   }
 
-  
   function openModal() {
     setIsOpen(true);
   }
@@ -132,33 +130,35 @@ function Maps() {
   }
 
   function handleSubmitTrasfer() {
-      openModal();
+    openModal();
   }
 
   async function sendTransfer() {
-    if (selectEmployee === '' || selectEmployee === null) {
-      alert('Selecione o vendendor');
+    if (selectEmployee === "" || selectEmployee === null) {
+      alert("Selecione o vendendor");
       return;
     }
 
-      if (jsonComplete === '' || jsonComplete === null) {
-        alert('Selecione a rota que você quer transferir');
-        return;
-      }
+    if (jsonComplete === "" || jsonComplete === null) {
+      alert("Selecione a rota que você quer transferir");
+      return;
+    }
 
-      const splitJson = jsonComplete.label.split('-');
+    const splitJson = jsonComplete.label.split("-");
 
-      const idJson = splitJson[0];
+    const idJson = splitJson[0];
 
-      try {
-        await api.post(`transfer-route?idJson=${idJson}&employee=${selectEmployee.value}`)
+    try {
+      await api.post(
+        `transfer-route?idJson=${idJson}&employee=${selectEmployee.value}`
+      );
 
-        toast.success('Rota transferida com sucesso!');
-  
-        closeModal();
-      } catch (error) {
-        toast.error('Erro ao transferir rota, tente novamente mais tarde');
-      }
+      toast.success("Rota transferida com sucesso!");
+
+      closeModal();
+    } catch (error) {
+      toast.error("Erro ao transferir rota, tente novamente mais tarde");
+    }
   }
 
   useEffect(() => {
@@ -186,7 +186,7 @@ function Maps() {
   console.log(datas);
 
   return (
-    <Container>        
+    <Container>
       {loading || loadingData ? (
         <Loading loading={loading} />
       ) : (
@@ -195,124 +195,127 @@ function Maps() {
             <Loading loading={loadingMaps} />
           ) : (
             <Map
-            style="mapbox://styles/mapbox/streets-v9"
-            zoom={[14]}
-            center={searchOn ? datas[0].coords : currentPosition}
-            containerStyle={{
-              height: "100vh",
-              width: "100vw",
-            }}
-          >
-            <>
-            <ContainerButtonRefresh>
-              <button type="button" onClick={loadLocationCache}>ATUALIZAR MAPA</button>
-            </ContainerButtonRefresh>
-            {geojson && (
+              style="mapbox://styles/mapbox/streets-v9"
+              zoom={[14]}
+              center={searchOn ? datas[0].coords : currentPosition}
+              containerStyle={{
+                height: "100vh",
+                width: "100vw",
+              }}
+            >
               <>
-                <GeoJSONLayer data={geojson} linePaint={linePaint} />
+                <ContainerButtonRefresh>
+                  <button type="button" onClick={loadLocationCache}>
+                    ATUALIZAR MAPA
+                  </button>
+                </ContainerButtonRefresh>
+                {geojson && (
+                  <>
+                    <GeoJSONLayer data={geojson} linePaint={linePaint} />
 
-                <>
-                  {geojson.features.map((p) => (
                     <>
-                      {p.geometry.type === "Point" && (
-                        <Marker
-                          coordinates={p.geometry.coordinates}
-                          onClick={() => {
-                            alert(
-                              p.properties.name + "\n" + p.properties.prp_name
-                            );
-                          }}
-                          anchor="bottom"
-                        >
-                          <img
-                            src={markerIcon}
-                            style={{
-                              width: 40,
-                              height: 40,
-                              borderRadius: 50,
-                              border: 50,
-                            }}
-                          />
-                        </Marker>
-                      )}
+                      {geojson.features.map((p) => (
+                        <>
+                          {p.geometry.type === "Point" && (
+                            <Marker
+                              coordinates={p.geometry.coordinates}
+                              onClick={() => {
+                                alert(
+                                  p.properties.name +
+                                    "\n" +
+                                    p.properties.prp_name
+                                );
+                              }}
+                              anchor="bottom"
+                            >
+                              <img
+                                src={markerIcon}
+                                style={{
+                                  width: 40,
+                                  height: 40,
+                                  borderRadius: 50,
+                                  border: 50,
+                                }}
+                              />
+                            </Marker>
+                          )}
 
-                      <>
-                        {p.geometry.type === "LineString" && (
                           <>
-                            <Marker
-                              coordinates={p.geometry.coordinates[0]}
-                              onClick={() => {
-                                alert("INICIO");
-                              }}
-                              anchor="bottom"
-                            >
-                              <img
-                                src={startIcon}
-                                style={{
-                                  width: 40,
-                                  height: 40,
-                                  borderRadius: 50,
-                                  border: 50,
-                                }}
-                              />
-                            </Marker>
+                            {p.geometry.type === "LineString" && (
+                              <>
+                                <Marker
+                                  coordinates={p.geometry.coordinates[0]}
+                                  onClick={() => {
+                                    alert("INICIO");
+                                  }}
+                                  anchor="bottom"
+                                >
+                                  <img
+                                    src={startIcon}
+                                    style={{
+                                      width: 40,
+                                      height: 40,
+                                      borderRadius: 50,
+                                      border: 50,
+                                    }}
+                                  />
+                                </Marker>
 
-                            <Marker
-                              coordinates={
-                                p.geometry.coordinates[
-                                  p.geometry.coordinates.length - 1
-                                ]
-                              }
-                              onClick={() => {
-                                alert("FIM");
-                              }}
-                              anchor="bottom"
-                            >
-                              <img
-                                src={finishedIcon}
-                                style={{
-                                  width: 40,
-                                  height: 40,
-                                  borderRadius: 50,
-                                  border: 50,
-                                }}
-                              />
-                            </Marker>
+                                <Marker
+                                  coordinates={
+                                    p.geometry.coordinates[
+                                      p.geometry.coordinates.length - 1
+                                    ]
+                                  }
+                                  onClick={() => {
+                                    alert("FIM");
+                                  }}
+                                  anchor="bottom"
+                                >
+                                  <img
+                                    src={finishedIcon}
+                                    style={{
+                                      width: 40,
+                                      height: 40,
+                                      borderRadius: 50,
+                                      border: 50,
+                                    }}
+                                  />
+                                </Marker>
+                              </>
+                            )}
                           </>
-                        )}
-                      </>
+                        </>
+                      ))}
                     </>
-                  ))}
-                </>
-              </>
-            )}
+                  </>
+                )}
 
-            {datas !== null && (
-              <>
-                {datas.map((location) => (
-                  <Marker
-                    coordinates={location.routes}
-                    onClick={() => {
-                      handleViewUser(location.user, location.user_name);
-                    }}
-                    anchor="bottom"
-                  >
-                    <img
-                      src={`https://avatars.dicebear.com/api/human/${location.user}.svg`}
-                      style={{
-                        width: 40,
-                        height: 40,
-                        borderRadius: 50,
-                        border: 50,
-                      }}
-                    />
-                  </Marker>
-                ))}
+                {datas !== null && (
+                  <>
+                    {datas.map((location) => (
+                      <Marker
+                        coordinates={location.routes}
+                        onClick={() => {
+                          handleViewUser(location.user, location.user_name);
+                        }}
+                        anchor="bottom"
+                      >
+                        <img
+                          src={`https://avatars.dicebear.com/api/human/${location.user}.svg`}
+                          style={{
+                            width: 40,
+                            height: 40,
+                            borderRadius: 50,
+                            border: 50,
+                          }}
+                        />
+                      </Marker>
+                    ))}
+                  </>
+                )}
               </>
-            )}
-
-            </>
-          </Map>
+            </Map>
           )}
 
           <Panel
@@ -321,11 +324,10 @@ function Maps() {
             handleSetGeoJson={handleSetGeoJson}
             handleClean={handleClean}
             handleSubmitTrasfer={handleSubmitTrasfer}
-          />  
+          />
         </>
-      )}      
+      )}
 
-      
       <Modal
         isOpen={modalIsOpen}
         onRequestClose={closeModal}
@@ -333,16 +335,16 @@ function Maps() {
         contentLabel="Transferir rota para outro vendedor"
       >
         <h2>Selecione o vendendor para qual você quer transferir a rota</h2>
-        <ReactSelect    
-            name={selectEmployee}
-            value={selectEmployee}
-            defaultValue={selectEmployee}
-            onChange={value => setSelectEmployee(value)}
-            placeholder={'Selecionar vendedor'}                    
-            options={employees}
-            isClearable={false}
-            isLoading={loadingEmployees}
-          />
+        <ReactSelect
+          name={selectEmployee}
+          value={selectEmployee}
+          defaultValue={selectEmployee}
+          onChange={(value) => setSelectEmployee(value)}
+          placeholder={"Selecionar vendedor"}
+          options={employees}
+          isClearable={false}
+          isLoading={loadingEmployees}
+        />
         <button onClick={sendTransfer}>Transferir</button>
       </Modal>
     </Container>
