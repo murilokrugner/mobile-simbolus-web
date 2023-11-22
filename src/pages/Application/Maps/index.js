@@ -62,6 +62,7 @@ function Maps() {
   const [jsonComplete, setJsonComplete] = useState(null);
 
   const [searchOn, setSearchOn] = useState(false);
+  const [currentSearchOn, setCurrentSearchOn] = useState({});
 
   const [modalIsOpen, setIsOpen] = useState(false);
 
@@ -88,6 +89,8 @@ function Maps() {
   function handleSetData(data) {
     setDatas(data);
     setSearchOn(true);
+    setCurrentSearchOn(data[0].routes)
+    loadLocationCache();
   }
 
   async function loadLocationCache() {
@@ -174,7 +177,7 @@ function Maps() {
 
   useEffect(() => {
     loadEmployees();
-  }, [datas, currentDatas, geojson]);
+  }, [datas, currentDatas, geojson, searchOn]);
 
   //mapbox://styles/mapbox/dark-v9
 
@@ -197,7 +200,7 @@ function Maps() {
             <Map
               style="mapbox://styles/mapbox/streets-v9"
               zoom={[14]}
-              center={searchOn ? datas[0].coords : currentPosition}
+              center={searchOn ? currentSearchOn : currentPosition}
               containerStyle={{
                 height: "100vh",
                 width: "100vw",
@@ -302,7 +305,7 @@ function Maps() {
                         anchor="bottom"
                       >
                         <img
-                          src={`https://avatars.dicebear.com/api/human/${location.user}.svg`}
+                          src={`https://api.multiavatar.com/${location.user_name}.png`}
                           style={{
                             width: 40,
                             height: 40,

@@ -42,7 +42,7 @@ export default function Header() {
               </button>
             </div>
             <img
-              src={'https://api.adorable.io/avatars/50/abott@adorable.pngprofile.avatar_url'}
+              src={`https://api.multiavatar.com/${profile.fun_nome}.png`}
               alt='avatar'
             />
           </Profile>

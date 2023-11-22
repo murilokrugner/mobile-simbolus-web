@@ -27,16 +27,21 @@ export default function SignIn() {
   const [loadingCompanies, setLoadingCompanies] = useState(true);
 
   async function loadCompanies() {
-    const response = await api.get("companies");
+    try {
+      const response = await api.get("companies");
 
-    const data = [];
+      const data = [];
 
-    const formatCompanies = response?.data?.map((item) => {
-      data.push({ value: item.EMP_NOME, label: item.EMP_NOME });
-    });
+      const formatCompanies = response?.data?.map((item) => {
+        data.push({ value: item.EMP_NOME, label: item.EMP_NOME });
+      });
 
-    setCompanies(data);
-    setLoadingCompanies(false);
+      setCompanies(data);
+      setLoadingCompanies(false);
+
+    } catch (error) {
+      
+    }
   }
 
   function handleSubmit({ email, password }) {

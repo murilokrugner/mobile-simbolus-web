@@ -24,7 +24,7 @@ function Panel({dataEmployee, handleSetData, handleSetGeoJson, handleClean, hand
         const data = [];
 
         const formatEmployees = response.data.map(item => {
-        data.push({'value': item.FUN_CODIGO, 'label': item.FUN_NOME});
+            data.push({'value': item.FUN_CODIGO, 'label': item.FUN_NOME});
         });
 
         setEmployees(data);
@@ -37,13 +37,20 @@ function Panel({dataEmployee, handleSetData, handleSetGeoJson, handleClean, hand
             alert('Selecione o vendendor');
             return;
         }
-        
-        const search = dataEmployee.map(item => {
+
+        let verify = false;
+
+        const search = dataEmployee.map(item => {            
             if (item.user_name === selectEmployee.label) {
                 handleSetData([item]);
+                verify = true;
                 return;
-            }              
+            }             
         });
+
+        if (!verify) {
+            alert(`Nenhum vendedor encontrado!`)
+        }
     }
 
     function handleAllEmployees() {
